@@ -32,7 +32,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     '''Создает комментaрий или возвращает список комментариев'''
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthorOrReadOnly, IsAuthenticated)
+    permission_classes = (IsAuthorOrReadOnly,)
 
     def get_queryset(self):
         '''Возвращает список комментариев'''
