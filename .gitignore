@@ -58,8 +58,6 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -146,5 +144,5 @@ dmypy.json
 .mypy_cache
 
 # папки со статикой и медиа
-media/
-yatube_api/posts/static/
+# media/
+# yatube_api/posts/static/
