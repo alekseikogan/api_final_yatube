@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'djoser',
     'api',
     'posts',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [

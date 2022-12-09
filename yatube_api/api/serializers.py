@@ -1,7 +1,9 @@
 import base64
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 from django.core.files.base import ContentFile
+from django.contrib.auth.models import User
 
 from posts.models import Comment, Post, Group, Follow
 
@@ -54,14 +56,22 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(
+        default=serializers.CurrentUserDefault(),
+        slug_field='username',
         read_only=True,
-        slug_field='username'
     )
     following = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='name'
+        slug_field='username',
+        queryset=User.objects.all()
     )
 
     class Meta:
         model = Follow
         fields = ('user', 'following')
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=('user', 'following'),
+            )
+        ]
