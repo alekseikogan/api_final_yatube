@@ -1,13 +1,13 @@
-from django.forms import ValidationError
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework import filters
 from rest_framework import permissions
+from rest_framework import serializers
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from posts.models import Post, Group, Comment, Follow
+from posts.models import Post, Group, Comment
 from .serializers import PostSerializer, CommentSerializer, GroupSerializer
 from .serializers import FollowSerializer
 from .user_permissions import IsAuthorOrReadOnly
@@ -17,10 +17,7 @@ class PostViewSet(viewsets.ModelViewSet):
     '''Создает пост или возвращает список постов'''
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (
-        IsAuthorOrReadOnly,
-        permissions.IsAuthenticatedOrReadOnly,
-    )
+    permission_classes = (IsAuthorOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
@@ -55,22 +52,24 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    '''Получает группу или список групп'''
+    '''Возращает подписки пользователя или офрмляет подписку'''
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
+        '''Получает список подписок пользователя'''
         user = self.request.user
         return user.follower.all()
 
     def perform_create(self, serializer):
+        '''Оформляет подписку на автора'''
         user = self.request.user
         following = serializer.validated_data.get('following')
         if user != following:
             serializer.save(user=user)
         else:
-            raise ValidationError(
+            raise serializers.ValidationError(
                 'Попытка подписаться на самого себя!'
             )
