@@ -1,8 +1,12 @@
 # Финальное задание 9-го спринта
 ## Проект «API для Yatube»
-### Как запустить проект:
+### 1. Описание проекта
+Что это за проект, какую задачу он решает, в чём его польза? 
+Давайте разбираться.
 
-Клонировать репозиторий и перейти в него в командной строке:
+### 2. Как запустить проект:
+Как развернуть проект на локальной машине
+- Клонировать репозиторий и перейти в него в командной строке:
 
 ```
 git clone https://github.com/alekseikogan/api_final_yatube.git
@@ -12,7 +16,7 @@ git clone https://github.com/alekseikogan/api_final_yatube.git
 cd api_final_yatube
 ```
 
-Cоздать и активировать виртуальное окружение:
+- Cоздать и активировать виртуальное окружение:
 
 ```
 python -m venv env
@@ -22,7 +26,7 @@ python -m venv env
 source venv/Scripts/activate
 ```
 
-Установить зависимости из файла requirements.txt:
+- Установить зависимости из файла requirements.txt:
 
 ```
 python -m pip install --upgrade pip
@@ -32,14 +36,15 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Выполнить миграции:
+- Выполнить миграции:
 
 ```
 python manage.py migrate
 ```
 
-Запустить проект:
+- Запустить проект:
 
 ```
 python manage.py runserver
 ```
+### 3. Некоторые примеры запросов к API. 
