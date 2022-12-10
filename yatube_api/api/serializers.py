@@ -20,26 +20,16 @@ class Base64ImageField(serializers.ImageField):
 
 class PostSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
-    image = Base64ImageField(required=False, allow_null=True)
-    group = serializers.PrimaryKeyRelatedField(
-        queryset=Group.objects.all(),
-        required=False)
 
     class Meta:
         fields = '__all__'
         model = Post
 
-    def update(self, instance, validated_data):
-        instance.text = validated_data.get('text', instance.text)
-        instance.image = validated_data.get('image', instance.image)
-        instance.save()
-        return instance
-
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ('id', 'title', 'slug', 'description')
+        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -49,7 +39,7 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'author', 'post', 'text', 'created')
+        fields = '__all__'
         read_only_fields = ('post',)
         model = Comment
 
@@ -58,7 +48,7 @@ class FollowSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(
         default=serializers.CurrentUserDefault(),
         slug_field='username',
-        read_only=True,
+        queryset=User.objects.all()
     )
     following = serializers.SlugRelatedField(
         slug_field='username',
@@ -72,6 +62,14 @@ class FollowSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
-                fields=('user', 'following'),
-            )
+                fields=('user', 'following'),)
         ]
+
+    def validate(self, data):
+        following = data['following']
+        user = data['user']
+        if user == following:
+            raise serializers.ValidationError(
+                'Попытка подписаться на самого себя!'
+            )
+        return data
